@@ -5,14 +5,6 @@
 # Date: 2024-05-13
 # ----------------
 
-# Why this iamge ?
-# Features:
-# - Added nano editor
-# - Added bash shell and made it the default shell
-
-# Usage:
-# docker run -it --rm azataiot/alpine
-
 ARG BASE_IMAGE=alpine:3.19
 FROM ${BASE_IMAGE} as builder
 ENV LANG en_US.utf8
@@ -26,6 +18,9 @@ RUN set -eux; \
         bash \
         su-exec \
         nano
+
+# Change the defult shell to bash
+RUN sed -i -e '/^root:/ s|/bin/ash|/bin/bash|' /etc/passwd
 
 FROM ${BASE_IMAGE} as final
 COPY --from=builder /bin/bash /bin/bash
