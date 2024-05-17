@@ -14,7 +14,6 @@ RUN set -eux; \
     apk upgrade; \
     apk add --no-cache \
         readline \
-        ncurses \
         bash \
         su-exec \
         nano
