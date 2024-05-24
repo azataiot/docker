@@ -41,9 +41,11 @@ pg_configure_cluster() {
 
 # If the user has provided a different database name than the default `postgres`, create the database
 pg_create_db() {
-  echo "Creating PostgreSQL database: $POSTGRES_DB ..."
-  # Create the PostgreSQL database
-  echo "CREATE DATABASE $POSTGRES_DB;" | psql -b --username="$POSTGRES_USER" --no-password --no-psqlrc
+  if [ "$POSTGRES_DB" != 'postgres' ]; then
+    echo "Creating PostgreSQL database: $POSTGRES_DB ..."
+    # Create the PostgreSQL database
+    echo "CREATE DATABASE $POSTGRES_DB;" | psql -b --username="$POSTGRES_USER" --no-password --no-psqlrc
+  fi
 }
 
 # Process the command line arguments
@@ -70,18 +72,17 @@ fi
 if [ ! -f /var/lib/postgresql/data/postmaster.pid ]; then
   # Start the PostgreSQL service
   echo "Starting the PostgreSQL service..."
+  # Bash job control
+  # https://docs.docker.com/config/containers/multi-service_container/
+  set -m
   su-exec postgres postgres -D "$PGDATA" &
   # Wait for the PostgreSQL service to start
-  # Check the status of the PostgreSQL service
-  while ! su-exec postgres pg_isready -q; do
+  until su-exec postgres pg_isready; do
     echo "Waiting for the PostgreSQL service to start..."
     sleep 1
   done
-  # Check if the user has provided a different database name than the default `postgres`
-  if [ "$POSTGRES_DB" != 'postgres' ]; then
-    # Create the PostgreSQL database
-    pg_create_db
-  fi
-  # Postgres logs to stdout
-  fg
+  # Create the PostgreSQL database if it doesn't exist (default: `postgres`)
+  pg_create_db
+  # Bash job control
+  fg %1
 fi
