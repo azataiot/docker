@@ -22,6 +22,7 @@ ENV TZ=UTC
 
 RUN set -eux; \
       \
+        mkdir -p "$PGDATA" && chown -R postgres:postgres "$PGDATA" && chmod 700 "$PGDATA"; \
         mkdir -p /run/postgresql && chown -R postgres:postgres /run/postgresql && chmod 3777 /var/run/postgresql ; \
         echo "$POSTGRES_PASSWORD" > /tmp/pgpass
 

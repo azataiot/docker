@@ -27,11 +27,6 @@ EOF
 pg_create_cluster() {
   echo "Setting up PostgreSQL database cluster..."
   echo "PGDATA: $PGDATA"
-  # Create the PostgreSQL data directory (PGDATA) if it doesn't exist
-  if [ ! -d "$PGDATA" ]; then
-    mkdir -p "$PGDATA"
-    chown -R postgres:postgres "$PGDATA"
-  fi
   # Initialize the PostgreSQL database
   su-exec postgres initdb --auth-host=scram-sha-256 --encoding=UTF8 --user="$POSTGRES_USER" --pwfile=/tmp/pgpass -D "$PGDATA"
   # Remove the password file
