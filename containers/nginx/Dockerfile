@@ -1,6 +1,6 @@
 # -----------------------
-# Docker Container Template
-# https://www.alpinelinux.org/
+# Nginx Dockerfile
+# https://nginx.org/en/docs/
 # Author: @azataiot
 # Date: 2024-05-25
 # ----------------
@@ -13,14 +13,17 @@ RUN set -eux; \
 	apk update; \
     apk upgrade; \
     apk add --no-cache \
-        bash \
+        nginx
 
+EXPOSE 80
+VOLUME /etc/nginx/http.d/
+VOLUME /etc/nginx/conf.d/
+VOLUME /usr/share/nginx/html/
 
-FROM ${BASE_IMAGE} as final
-
-
-EXPOSE 3000
-VOLUME /etc/bash
+# Copy the nginx configuration file into the Docker image
+COPY conf.d/ /etc/nginx/conf.d/
+COPY http.d/ /etc/nginx/http.d/
+COPY html/ /usr/share/nginx/html/
 
 # Copy the docker-entrypoint.sh script into the Docker image
 COPY ./scripts/entrypoint.sh /usr/local/bin/
@@ -30,4 +33,4 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 
 # Use the script as the entrypoint
 ENTRYPOINT ["entrypoint.sh"]
-CMD ["bash"]
+CMD ["nginx"]
