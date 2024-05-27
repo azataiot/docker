@@ -24,14 +24,21 @@ fi
 set -m
 
 # Start the primary process and put it in the background
-for i in {1..10}; do
-  echo "Primary process is running... $i"
+for i in {1..5}; do
+  echo "Primary process is starting... $i"
   sleep 1
 done
 
+# Start the primary process
+# shellcheck disable=SC2016
+while true; do
+  # shellcheck disable=SC2091
+  echo "echo $(date +%s%N) Primary process is running...";
+  sleep 1;
+  done &
+
 # Wait for the primary process to start
 sleep 1
-
 # Start the helper process
 
 for i in {1..3}; do
