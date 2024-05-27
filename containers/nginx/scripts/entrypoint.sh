@@ -15,9 +15,14 @@ cat <<-'EOF'
 
 EOF
 
-if [ "$1" != 'nginx' ]; then
-  echo "No arguments provided; Running the command..."
-  exec "$@"
-fi
 
-nginx -g "daemon off;"
+case "$1" in
+    nginx)
+      nginx -g "daemon off;"
+      ;;
+    supervisor)
+      exec supervisord -c /etc/supervisord.conf
+      ;;
+    *)
+      exec "$@"
+esac

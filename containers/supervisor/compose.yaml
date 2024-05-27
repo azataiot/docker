@@ -1,0 +1,6 @@
+services:
+  supervisor:
+    image: azataiot/supervisor:latest
+    restart: always
+    volumes:
+      - ./example/:/etc/supervisor.d/
