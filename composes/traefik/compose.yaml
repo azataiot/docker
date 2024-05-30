@@ -1,0 +1,21 @@
+services:
+  traefik:
+    image: traefik:v3.0
+    command:
+      - --api.insecure=true
+      - --providers.docker
+    ports:
+      # HTTP
+      - "80:80"
+      # Web UI
+      - "8080:8080"
+    networks:
+      - traefik-public
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock
+
+
+networks:
+  traefik-public:
+    external: true
