@@ -1,0 +1,47 @@
+# Traefik Static Configuration
+
+# Global configuration
+[global]
+checkNewVersion = true
+sendAnonymousUsage = false
+
+# Entry Points
+[entryPoints]
+[entryPoints.web]
+address = ":80" # tcp :80
+# [entryPoints.web.http.redirections]
+# [entryPoints.web.http.redirections.entryPoint]
+# to = "websecure"
+[entryPoints.websecure]
+address = ":443" # tcp :443 for TLS
+
+# Providers
+[providers]
+# Configure Traefik to use the Docker provider.
+[providers.docker]
+endpoint = "unix:///var/run/docker.sock"
+exposedByDefault = false
+network = "traefik-public"
+watch = true
+# Enable the file provider to define routers / middlewares / services in file
+[providers.file]
+directory = "/conf"
+watch = true
+
+# API and dashboard
+[api]
+dashboard = true
+debug = false
+insecure = false
+
+# Certificates and SSL
+[certificatesResolvers.le.acme]
+email = "info@azat.ai"
+storage = "/certificates/acme.json"
+[certificatesResolvers.le.acme.dnsChallenge]
+provider = "cloudflare"
+resolvers = ["1.1.1.1:53", "1.0.0.1:53"]
+# Logging
+[log]
+level = "WARN"
+filePath = "/logs/traefik.log"
