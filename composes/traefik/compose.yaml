@@ -1,21 +1,19 @@
 services:
   traefik:
+    restart: always
     image: traefik:v3.0
     command:
-      - --api.insecure=true
-      - --providers.docker
+      - --configFile=/etc/traefik/traefik.toml
     ports:
-      # HTTP
       - "80:80"
-      # Web UI
       - "8080:8080"
     networks:
       - traefik-public
     volumes:
-      # So that Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock
-
-
+      - ./traefik.toml:/etc/traefik/traefik.toml
+      - ./conf:/conf:ro
+      - ./certificates/acme.json:/certificates/acme.json
 networks:
   traefik-public:
     external: true
